@@ -1,6 +1,10 @@
 
 
+document.getElementById("btnStart").onclick = function() {loadGameInIFrame()};
+
 document.getElementById("btnBlumQuery").onclick = function() {getBlumQuery()};
+
+document.getElementById("btnHamsterToken").onclick = function() {getHamsterToken()};
 
 async function getCurrentTab() {
     let queryOptions = { active: true, currentWindow: true };
@@ -18,6 +22,25 @@ async function execScript(fScript) {
 		target: { tabId: activeTab.id },
 		files : [ fScript ]
 	})
+}
+
+async function loadGameInIFrame() {	
+	await execScript("startapp.js");
+}
+
+async function getHamsterToken() {
+	
+	chrome.storage.local.get(["hamsterToken"]).then((result) => {
+    if(result.hamsterToken == undefined) {
+      alertF("Cannot copy Hamster token. Please restart the game and try again.");
+    } else {
+      alertInfoF(result.hamsterToken.substring(7));
+      copyTextToClipboard(result.hamsterToken.substring(7));
+      alertF("Hamster Token Copied");
+    }
+		
+	});
+	
 }
 
 async function getBlumQuery() {

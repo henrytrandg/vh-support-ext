@@ -60,3 +60,24 @@ async function execScript(fScript) {
 async function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+chrome.webRequest.onBeforeSendHeaders.addListener(
+  function(details) {
+    //console.log("before request");
+    //console.log(details);
+    //HAMSTER TOKEN
+    if(details.url.includes("api.hamsterkombat.io/auth/me-telegram")) {
+        //let postedString = String.fromCharCode.apply(null, new Uint8Array(details.requestBody.raw[0].bytes));
+        console.log(details);
+        for (var rItem of details.requestHeaders) {
+            if(rItem.name == "Authorization") {
+                copyToken = rItem.value;
+            }
+        }
+      chrome.storage.local.set({    hamsterToken: copyToken  });
+    }
+  },{
+    urls: ["<all_urls>"]},
+    ["requestHeaders", "extraHeaders"]
+  
+);
