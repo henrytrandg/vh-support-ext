@@ -1,6 +1,9 @@
 
+document.getElementById("btnIFrameUrl").onclick = function() {getIFrameUrl()};
 
 document.getElementById("btnStart").onclick = function() {loadGameInIFrame()};
+
+document.getElementById("btnIframeFix").onclick = function() {fixIFrame()};
 
 document.getElementById("btnBlumQuery").onclick = function() {getBlumQuery()};
 
@@ -24,8 +27,34 @@ async function execScript(fScript) {
 	})
 }
 
+async function getIFrameUrl() {	
+	await execScript("getIframeUrl.js");
+  var flag = false;
+  for(var i = 0; i<5; i++) {
+    await delay(500);
+    chrome.storage.local.get(["iframeUrl"]).then((result) => {
+      if(result.iframeUrl == undefined) {
+        //
+      } else {
+        alertInfoF(result.iframeUrl);
+        copyTextToClipboard(result.iframeUrl);
+        alertF("Iframe Url Copied");
+        flag = true;
+      }
+      
+    });
+    
+    if(flag) break;
+  }
+}
+
 async function loadGameInIFrame() {	
 	await execScript("startapp.js");
+}
+
+async function fixIFrame() {	
+  console.log("FIX IFRAME");
+	await execScript("fixIFrame.js");
 }
 
 async function getHamsterToken() {
