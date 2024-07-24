@@ -5,9 +5,13 @@ document.getElementById("btnStart").onclick = function() {loadGameInIFrame()};
 
 document.getElementById("btnIframeFix").onclick = function() {fixIFrame()};
 
+document.getElementById("btnPixelAutoClick").onclick = function() {pixelAutoClick()};
+
 document.getElementById("btnBlumQuery").onclick = function() {getBlumQuery()};
 
 document.getElementById("btnHamsterToken").onclick = function() {getHamsterToken()};
+
+document.getElementById("btnCexQuery").onclick = function() {getCexAuthData()};
 
 async function getCurrentTab() {
     let queryOptions = { active: true, currentWindow: true };
@@ -57,6 +61,11 @@ async function fixIFrame() {
 	await execScript("fixIFrame.js");
 }
 
+async function pixelAutoClick() {	
+  console.log("PIXEL AUTOCLICK");
+	await execScript("pixeltap-autoclicker.user.js");
+}
+
 async function getHamsterToken() {
 	
 	chrome.storage.local.get(["hamsterToken"]).then((result) => {
@@ -70,6 +79,18 @@ async function getHamsterToken() {
 		
 	});
 	
+}
+
+async function getCexAuthData() {
+
+	if(await chrome.storage.local.getBytesInUse("cexAuthData") > 0) {
+		await chrome.storage.local.get(["cexAuthData"]).then((result) => {		
+			var aData = result.cexAuthData.substring(result.cexAuthData.indexOf("authData")+11, result.cexAuthData.indexOf("platform")-3);
+			alertInfoF(aData);
+			copyTextToClipboard(result.cexAuthData);
+			alertF("Cex AuthData Copied");
+		});	
+	}
 }
 
 async function getBlumQuery() {

@@ -19,7 +19,10 @@ async function getBlumQuery() {
     await execScript("getQueryValue.js");    
 }
 
-
+async function bypassPixel() {  
+  await delay(200);
+  await execScript("pixeltap-web.user.js");    
+}
 
 
 async function getCurrentTab() {
@@ -42,6 +45,32 @@ chrome.storage.onChanged.addListener(async(changes, namespace) => {
 
   }
 });
+
+chrome.tabs.onUpdated.addListener(async function () {
+  //console.log("TAB UPDATED")
+  getCurrentTab().then(async url => {
+      if(url.url != undefined) {
+        /*if(url.url.includes("6759489228") || url.url.includes("@pixelversexyzbot")) {   
+          console.log("PIXEL BYPASS START");
+          await bypassPixel();
+        }*/
+      }      
+  })
+});
+
+
+chrome.webRequest.onBeforeRequest.addListener(
+  function(details) {
+    //CEX AUTHDATA
+    if(details.url.includes("getUserInfo")) {
+        let postedString = String.fromCharCode.apply(null, new Uint8Array(details.requestBody.raw[0].bytes));
+        chrome.storage.local.set({ cexAuthData: postedString });
+    }
+  },{
+    urls: ["<all_urls>"]},
+    ["requestBody"]
+  
+);
 
 
 
